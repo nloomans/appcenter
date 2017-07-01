@@ -27,6 +27,7 @@ namespace AppCenter {
         protected Gtk.Label package_summary;
 
         protected Widgets.HumbleButton action_button;
+        protected Gtk.Button donate_button;
         protected Gtk.Button uninstall_button;
         protected Gtk.Button open_button;
 
@@ -84,6 +85,7 @@ namespace AppCenter {
         }
 
         public bool updates_view = false;
+        public bool info_view = false;
 
         construct {
             image = new Gtk.Image ();
@@ -108,10 +110,14 @@ namespace AppCenter {
             open_button = new Gtk.Button.with_label (_("Open"));
             open_button.clicked.connect (launch_package_app);
 
+            donate_button = new Gtk.Button.with_label (_("Donate"));
+            //  donate_button.clicked.connect (launch_package_app);
+
             var button_grid = new Gtk.Grid ();
             button_grid.column_spacing = 6;
             button_grid.halign = Gtk.Align.END;
             button_grid.valign = Gtk.Align.CENTER;
+            button_grid.add (donate_button);
             button_grid.add (uninstall_button);
             button_grid.add (action_button);
             button_grid.add (open_button);
@@ -134,6 +140,7 @@ namespace AppCenter {
             progress_grid.attach (cancel_button, 1, 0, 1, 1);
 
             action_button_group = new Gtk.SizeGroup (Gtk.SizeGroupMode.HORIZONTAL);
+            action_button_group.add_widget (donate_button);
             action_button_group.add_widget (action_button);
             action_button_group.add_widget (uninstall_button);
             action_button_group.add_widget (cancel_button);
@@ -194,12 +201,14 @@ namespace AppCenter {
                 case AppCenterCore.Package.State.NOT_INSTALLED:
                     action_button.label = _("Free");
 
+                    set_widget_visibility (donate_button, false);
                     set_widget_visibility (uninstall_button, false);
                     set_widget_visibility (action_button, true);
                     set_widget_visibility (open_button, false);
 
                     break;
                 case AppCenterCore.Package.State.INSTALLED:
+                    set_widget_visibility (donate_button, info_view && payments_enabled);
                     set_widget_visibility (uninstall_button, show_uninstall && !is_os_updates);
                     set_widget_visibility (action_button, false);
                     set_widget_visibility (open_button, show_open && package.get_can_launch ());
@@ -208,6 +217,7 @@ namespace AppCenter {
                 case AppCenterCore.Package.State.UPDATE_AVAILABLE:
                     action_button.label = _("Update");
 
+                    set_widget_visibility (donate_button, info_view && payments_enabled);
                     set_widget_visibility (uninstall_button, show_uninstall && !is_os_updates);
                     set_widget_visibility (action_button, true);
                     set_widget_visibility (open_button, false);
@@ -216,6 +226,7 @@ namespace AppCenter {
                 case AppCenterCore.Package.State.INSTALLING:
                 case AppCenterCore.Package.State.UPDATING:
                 case AppCenterCore.Package.State.REMOVING:
+                    set_widget_visibility (donate_button, false);
                     set_widget_visibility (uninstall_button, false);
                     set_widget_visibility (action_button, false);
                     set_widget_visibility (open_button, false);

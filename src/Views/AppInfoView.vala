@@ -41,6 +41,8 @@ namespace AppCenter.Views {
             image.margin_start = 6;
             image.pixel_size = 128;
 
+            info_view = true;
+
             action_button.suggested_action = true;
 
             var uninstall_button_context = uninstall_button.get_style_context ();
