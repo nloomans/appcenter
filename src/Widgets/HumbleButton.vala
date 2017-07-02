@@ -35,6 +35,7 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
         set {
             _amount = value;
             amount_button.label = get_amount_formatted (value, true);
+            selection.amount = value;
             //  custom_amount.value = value;
 
             if (_amount != 0) {

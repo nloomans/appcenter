@@ -22,9 +22,17 @@ public class AppCenter.Widgets.HumbleButtonAmountModifier : Gtk.Popover {
     public signal void payment_requested (int amount);
     public signal void download_requested ();
 
+    Gtk.SpinButton custom_amount;
+
     public HumbleButtonAmountModifier (Gtk.Widget relative_to) {
         //  chain up is not supported, so we cain't do `base (relative_to);`
         set_relative_to (relative_to);
+    }
+
+    public int amount {
+        set {
+            custom_amount.value = value;
+        }
     }
 
     construct {
@@ -40,7 +48,7 @@ public class AppCenter.Widgets.HumbleButtonAmountModifier : Gtk.Popover {
         var custom_label = new Gtk.Label ("$");
         custom_label.margin_start = 12;
 
-        var custom_amount = new Gtk.SpinButton.with_range (0, 100, 1);
+        custom_amount = new Gtk.SpinButton.with_range (0, 100, 1);
 
         custom_amount.value_changed.connect (() => {
             amount_update ((int) custom_amount.value);
