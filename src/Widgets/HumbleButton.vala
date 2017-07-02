@@ -21,9 +21,9 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
     public signal void download_requested ();
     public signal void payment_requested (int amount);
 
-    private Gtk.Popover selection;
+    private HumbleButtonAmountModifier selection;
     private Gtk.Button amount_button;
-    private Gtk.SpinButton custom_amount;
+    //  private Gtk.SpinButton custom_amount;
 
     private Gtk.ToggleButton arrow_button;
 
@@ -35,7 +35,7 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
         set {
             _amount = value;
             amount_button.label = get_amount_formatted (value, true);
-            custom_amount.value = value;
+            //  custom_amount.value = value;
 
             if (_amount != 0) {
                 amount_button.label = get_amount_formatted (_amount, true);
@@ -85,31 +85,6 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
         amount_button = new Gtk.Button.with_label (_("Free"));
         amount_button.hexpand = true;
 
-        var one_dollar = get_amount_button (1);
-        var five_dollar = get_amount_button (5);
-        var ten_dollar = get_amount_button (10);
-
-        var custom_label = new Gtk.Label ("$");
-        custom_label.margin_start = 12;
-
-        custom_amount = new Gtk.SpinButton.with_range (0, 100, 1);
-
-        var selection_list = new Gtk.Grid ();
-        selection_list.column_spacing = 6;
-        selection_list.margin = 12;
-        selection_list.add (one_dollar);
-        selection_list.add (five_dollar);
-        selection_list.add (ten_dollar);
-        selection_list.add (custom_label);
-        selection_list.add (custom_amount);
-
-        arrow_button = new Gtk.ToggleButton ();
-        arrow_button.image = new Gtk.Image.from_icon_name ("pan-down-symbolic", Gtk.IconSize.MENU);
-
-        selection = new Gtk.Popover (arrow_button);
-        selection.position = Gtk.PositionType.BOTTOM;
-        selection.add (selection_list);
-
         amount_button.clicked.connect (() => {
             if (this.amount != 0) {
                 payment_requested (this.amount);
@@ -118,23 +93,35 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
             }
         });
 
+        arrow_button = new Gtk.ToggleButton ();
+        arrow_button.image = new Gtk.Image.from_icon_name ("pan-down-symbolic", Gtk.IconSize.MENU);
+
+        selection = new HumbleButtonAmountModifier (arrow_button);
+
         arrow_button.toggled.connect (() => {
             selection.show_all ();
         });
 
-        custom_amount.value_changed.connect (() => {
-            amount = (int) custom_amount.value;
+        selection.amount_update.connect ((_amount) => {
+            amount = _amount;
         });
 
-        custom_amount.activate.connect (() => {
-            selection.hide ();
+        selection.payment_requested.connect ((_amount) => { payment_requested (_amount); });
+        selection.download_requested.connect (() => { download_requested (); });
 
-            if (this.amount != 0) {
-                payment_requested (this.amount);
-            } else {
-                download_requested ();
-            }
-        });
+        //  custom_amount.value_changed.connect (() => {
+        //      amount = (int) custom_amount.value;
+        //  });
+
+        //  custom_amount.activate.connect (() => {
+        //      selection.hide ();
+
+        //      if (this.amount != 0) {
+        //          payment_requested (this.amount);
+        //      } else {
+        //          download_requested ();
+        //      }
+        //  });
 
         selection.closed.connect (() => {
             arrow_button.active = false;
@@ -154,18 +141,6 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
             /// This amount will be US Dollars. Some languages might need a "$%dUSD"
             return _("$%d").printf (_amount);
         }
-    }
-
-    private Gtk.Button get_amount_button (int amount) {
-        var button = new Gtk.Button.with_label (get_amount_formatted (amount, false));
-
-        button.clicked.connect (() => {
-            this.amount = amount;
-            selection.hide ();
-            payment_requested (this.amount);
-        });
-
-        return button;
     }
 }
 
