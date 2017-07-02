@@ -29,6 +29,17 @@ public class AppCenter.Widgets.HumbleButtonAmountModifier : Gtk.Popover {
         }
     }
 
+    public bool allow_zero {
+        set {
+            if (value) {
+                // default
+                custom_amount.set_range(0, 100);
+            } else {
+                custom_amount.set_range(1, 100);
+            }
+        }
+    }
+
     private Gtk.SpinButton custom_amount;
     private Gtk.Button action_button;
 

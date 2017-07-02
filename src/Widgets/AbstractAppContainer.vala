@@ -114,6 +114,7 @@ namespace AppCenter {
             donate_button.clicked.connect (() => {
                 var modifier = new Widgets.HumbleButtonAmountModifier(donate_button);
                 modifier.standalone = true;
+                modifier.allow_zero = false;
                 modifier.show_all();
 
                 modifier.payment_requested.connect((amount) => {
