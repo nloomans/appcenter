@@ -111,7 +111,16 @@ namespace AppCenter {
             open_button.clicked.connect (launch_package_app);
 
             donate_button = new Gtk.Button.with_label (_("Donate"));
-            //  donate_button.clicked.connect (launch_package_app);
+            donate_button.clicked.connect (() => {
+                var modifier = new Widgets.HumbleButtonAmountModifier(donate_button);
+                modifier.show_all();
+
+                modifier.payment_requested.connect((amount) => {
+                    var stripe = new Widgets.StripeDialog (amount, this.package_name.label, this.package.component.get_desktop_id ().replace (".desktop", ""), this.package.get_payments_key());
+
+                    // don't do anything when download_requested is called
+                });
+            });
 
             var button_grid = new Gtk.Grid ();
             button_grid.column_spacing = 6;
