@@ -23,7 +23,6 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
 
     private HumbleButtonAmountModifier selection;
     private Gtk.Button amount_button;
-    //  private Gtk.SpinButton custom_amount;
 
     private Gtk.ToggleButton arrow_button;
 
@@ -36,7 +35,6 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
             _amount = value;
             amount_button.label = get_amount_formatted (value, true);
             selection.amount = value;
-            //  custom_amount.value = value;
 
             if (_amount != 0) {
                 amount_button.label = get_amount_formatted (_amount, true);
@@ -109,20 +107,6 @@ public class AppCenter.Widgets.HumbleButton : Gtk.Grid {
 
         selection.payment_requested.connect ((_amount) => { payment_requested (_amount); });
         selection.download_requested.connect (() => { download_requested (); });
-
-        //  custom_amount.value_changed.connect (() => {
-        //      amount = (int) custom_amount.value;
-        //  });
-
-        //  custom_amount.activate.connect (() => {
-        //      selection.hide ();
-
-        //      if (this.amount != 0) {
-        //          payment_requested (this.amount);
-        //      } else {
-        //          download_requested ();
-        //      }
-        //  });
 
         selection.closed.connect (() => {
             arrow_button.active = false;
