@@ -22,7 +22,15 @@ public class AppCenter.Widgets.HumbleButtonAmountModifier : Gtk.Popover {
     public signal void payment_requested (int amount);
     public signal void download_requested ();
 
-    Gtk.SpinButton custom_amount;
+    public bool standalone {
+        set {
+            action_button.no_show_all = !value;
+            action_button.visible = value;
+        }
+    }
+
+    private Gtk.SpinButton custom_amount;
+    private Gtk.Button action_button;
 
     public HumbleButtonAmountModifier (Gtk.Widget relative_to) {
         //  chain up is not supported, so we cain't do `base (relative_to);`
@@ -64,11 +72,26 @@ public class AppCenter.Widgets.HumbleButtonAmountModifier : Gtk.Popover {
             }
         });
 
+        action_button = new Gtk.Button.with_label (_("Pay"));
+        action_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
+
+        action_button.visible = false;
+        action_button.no_show_all = true;
+
+        amount_update.connect ((amount) => {
+            if (amount != 0) {
+                action_button.label = _("Pay");
+            } else {
+                action_button.label = _("Install");
+            }
+        });
+
         selection_list.add (one_dollar);
         selection_list.add (five_dollar);
         selection_list.add (ten_dollar);
         selection_list.add (custom_label);
         selection_list.add (custom_amount);
+        selection_list.add (action_button);
 
         position = Gtk.PositionType.BOTTOM;
         add (selection_list);

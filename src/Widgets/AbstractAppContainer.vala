@@ -113,6 +113,7 @@ namespace AppCenter {
             donate_button = new Gtk.Button.with_label (_("Donate"));
             donate_button.clicked.connect (() => {
                 var modifier = new Widgets.HumbleButtonAmountModifier(donate_button);
+                modifier.standalone = true;
                 modifier.show_all();
 
                 modifier.payment_requested.connect((amount) => {
